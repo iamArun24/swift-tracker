@@ -62,13 +62,13 @@ int main() {
     CROW_ROUTE(app, "/")
     .methods("OPTIONS"_method)
     ([](const crow::request& req){
-        return CorsMiddleware::handle_options();
+        return CorsMiddleware::handle_options(req);
     });
     
     CROW_ROUTE(app, "/<path>")
     .methods("OPTIONS"_method)
     ([](const crow::request& req, std::string path){
-        return CorsMiddleware::handle_options();
+        return CorsMiddleware::handle_options(req);
     });
     
     // ============================================================
@@ -419,10 +419,11 @@ int main() {
     CROW_ROUTE(app, "/<path>")
     ([](const crow::request& req, std::string path){
         if (req.method == "OPTIONS"_method) {
-            return CorsMiddleware::handle_options();
+            return CorsMiddleware::handle_options(req);
         }
         crow::response res(404, "Not found");
-        CorsMiddleware::add_headers(res);
+        std::string origin = req.get_header_value("Origin");
+        CorsMiddleware::add_headers(res, origin);
         return res;
     });
     
