@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Create third_party directory and download libraries
 RUN mkdir -p /app/third_party && \
-    git clone --depth 1 --branch v1.0.5 https://github.com/CrowCpp/Crow.git /app/third_party/crow && \
+    git clone --depth 1 https://github.com/CrowCpp/Crow.git /app/third_party/crow && \
     git clone --depth 1 https://github.com/nlohmann/json.git /app/third_party/nlohmann && \
     git clone --depth 1 https://github.com/chriskohlhoff/asio.git /app/third_party/asio
 
