@@ -62,13 +62,38 @@ int main() {
     CROW_ROUTE(app, "/")
     .methods("OPTIONS"_method)
     ([](const crow::request& req){
-        return CorsMiddleware::handle_options(req);
+        return CorsMiddleware::handle_options();
     });
-    
-    CROW_ROUTE(app, "/<path>")
+
+    // Cover all API path depths for preflight
+    CROW_ROUTE(app, "/<string>")
     .methods("OPTIONS"_method)
-    ([](const crow::request& req, std::string path){
-        return CorsMiddleware::handle_options(req);
+    ([](const crow::request& req, std::string a){
+        return CorsMiddleware::handle_options();
+    });
+
+    CROW_ROUTE(app, "/<string>/<string>")
+    .methods("OPTIONS"_method)
+    ([](const crow::request& req, std::string a, std::string b){
+        return CorsMiddleware::handle_options();
+    });
+
+    CROW_ROUTE(app, "/<string>/<string>/<string>")
+    .methods("OPTIONS"_method)
+    ([](const crow::request& req, std::string a, std::string b, std::string c){
+        return CorsMiddleware::handle_options();
+    });
+
+    CROW_ROUTE(app, "/<string>/<string>/<int>")
+    .methods("OPTIONS"_method)
+    ([](const crow::request& req, std::string a, std::string b, int c){
+        return CorsMiddleware::handle_options();
+    });
+
+    CROW_ROUTE(app, "/<string>/<string>/<int>/<string>")
+    .methods("OPTIONS"_method)
+    ([](const crow::request& req, std::string a, std::string b, int c, std::string d){
+        return CorsMiddleware::handle_options();
     });
     
     // ============================================================
