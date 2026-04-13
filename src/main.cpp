@@ -25,7 +25,7 @@ int main() {
     
     // Initialize Database
     try {
-        DatabaseManager::initialize(Config::get_db_path());
+        DatabaseManager::get_instance(Config::get_db_path()).initialize();
         std::cout << "[DatabaseManager] Database initialized successfully\n";
     } catch (const std::exception& e) {
         std::cerr << "[DatabaseManager] Error: " << e.what() << std::endl;

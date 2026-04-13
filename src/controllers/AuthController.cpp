@@ -53,18 +53,18 @@ crow::response AuthController::login(const crow::request& req) {
         nlohmann::json response = JsonUtils::success_response("Login successful", result.to_json());
         crow::response res(200, response.dump());
         res.set_header("Content-Type", "application/json");
-        res; res;
-        res.set_header("Content-Type", "application/json");
-        return res
+        return res;
         
     } catch (const nlohmann::json::exception& e) {
-        n::json err =  resJsonUtils::error_;
+        nlohmann::json err = JsonUtils::error_response("Invalid JSON", 400);
+        crow::response res(400, err.dump());
         res.set_header("Content-Type", "application/json");
-        return resresponse("Invalid JSON", 400);
-        return crow::response(400, err.dump());
+        return res;
     } catch (...) {
         nlohmann::json err = JsonUtils::error_response("Internal server error", 500);
-        return crow::response(500, err.dump());
+        crow::response res(500, err.dump());
+        res.set_header("Content-Type", "application/json");
+        return res;
     }
 }
 
@@ -95,76 +95,76 @@ crow::response AuthController::update_profile(const crow::request& req) {
     }
     
     try {
-        auto nlohmann::jse rosn::parse(req.body);
-            res.set_header("Content-Type", "application/json");
-            return res;
+        auto body = nlohmann::json::parse(req.body);
         
         if (auth_service_.update_profile(auth.payload.user_id, body)) {
-            n::json respon resse = JsonUtils::success_response("Profile updated successfully");
+            nlohmann::json response = JsonUtils::success_response("Profile updated successfully");
+            crow::response res(200, response.dump());
             res.set_header("Content-Type", "application/json");
             return res;
-            return crow::response(200, response.dump());
         } else {
             nlohmann::json err = JsonUtils::error_response("Failed to update profile", 400);
-            return crow::response(400, err.dump());
-       e rs);
-        res.set_header("Content-Type", "application/json";
-        return res
+            crow::response res(400, err.dump());
+            res.set_header("Content-Type", "application/json");
+            return res;
+        }
         
     } catch (const nlohmann::json::exception& e) {
         nlohmann::json err = JsonUtils::error_response("Invalid JSON", 400);
-        return crow::response(400, err.dump());
+        crow::response res(400, err.dump());
+        res.set_header("Content-Type", "application/json");
+        return res;
     }
 }
 
 crow::response AuthController::change_password(const crow::request& req) {
     auto auth = AuthMiddleware::verify(req);
     if (!auth.success) {
-        retuMiddleware::ue rnsauthorized(auth.error_message);
-            res.set_header("Content-Type", "application/json");
- }       return res;
-        
+        return AuthMiddleware::unauthorized(auth.error_message);
+    }
     
     try {
         auto body = nlohmann::json::parse(req.body);
-       std:g old_password  res= body.value("old_password", "");
-            res.set_header("Content-Type", "application/json");
-            return res;
+        std::string old_password = body.value("old_password", "");
         std::string new_password = body.value("new_password", "");
         
         if (old_password.empty() || new_password.empty()) {
             nlohmann::json err = JsonUtils::error_response("Both old and new password required", 400);
-            return crow::response(400, err.dump());
+            crow::response res(400, err.dump());
+            res.set_header("Content-Type", "application/json");
+            return res;
         }
-       e rs);
-            res.set_header("Content-Type", "application/json";
-            return res
+        
         if (new_password.length() < 8) {
             nlohmann::json err = JsonUtils::error_response("Password must be at least 8 characters", 400);
-            return crow::response(400, err.dump());
-        res
-        res.set_header("Content-Type", "application/json");
-        return res;
+            crow::response res(400, err.dump());
+            res.set_header("Content-Type", "application/json");
+            return res;
+        }
         
         bool changed = auth_service_.change_password(auth.payload.user_id, old_password, new_password);
         
-        anged) { res
-        res.set_header("Content-Type", "application/json");
-        return res;
+        if (!changed) {
             nlohmann::json err = JsonUtils::error_response("Old password is incorrect", 400);
-            return crow::response(400, err.dump());
-       e rs);
-        res.set_header("Content-Type", "application/json";
-        return res
+            crow::response res(400, err.dump());
+            res.set_header("Content-Type", "application/json");
+            return res;
+        }
         
         nlohmann::json response = JsonUtils::success_response("Password changed successfully");
-        return crow::response(200, response.dump());
+        crow::response res(200, response.dump());
+        res.set_header("Content-Type", "application/json");
+        return res;
         
     } catch (const nlohmann::json::exception& e) {
         nlohmann::json err = JsonUtils::error_response("Invalid JSON", 400);
-        return crow::response(400, err.dump());
+        crow::response res(400, err.dump());
+        res.set_header("Content-Type", "application/json");
+        return res;
     } catch (...) {
         nlohmann::json err = JsonUtils::error_response("Internal server error", 500);
-        return crow::response(500, err.dump());
+        crow::response res(500, err.dump());
+        res.set_header("Content-Type", "application/json");
+        return res;
     }
 }
