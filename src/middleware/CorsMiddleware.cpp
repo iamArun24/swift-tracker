@@ -3,8 +3,8 @@
 #include "../../include/config/Config.h"
 
 void CorsMiddleware::add_headers(crow::response& res) {
-    res.set_header("Access-Control-Allow-Origin", Config::ALLOWED_ORIGIN);
-    res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.set_header("Access-Control-Allow-Origin", Config::get_allowed_origin());
+    res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.set_header("Access-Control-Allow-Credentials", "true");
     res.set_header("Access-Control-Max-Age", "3600");

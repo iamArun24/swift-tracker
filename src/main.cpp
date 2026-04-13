@@ -15,26 +15,33 @@
 #include <iostream>
 
 int main() {
-    std::cout << "========================================" << std::endl;
-    std::cout << "  SwiftTrack Courier Tracking System  " << std::endl;
-    std::cout << "  Version: " << Config::APP_VERSION << "              " << std::endl;
-    std::cout << "========================================" << std::endl;
+    crow::SimpleApp app;
     
-    // Initialize JWT secret
-    JwtUtils::set_secret(Config::JWT_SECRET);
+    // Log initialization
+    std::cout << "========================================\n";
+    std::cout << "  SwiftTrack Courier Tracking System  \n";
+    std::cout << "  Version: " << Config::APP_VERSION << "\n";
+    std::cout << "========================================\n";
     
-    // Initialize database
-    auto& db = DatabaseManager::get_instance(Config::DB_PATH);
-    if (!db.initialize()) {
-        std::cerr << "Failed to initialize database!" << std::endl;
+    // Initialize Database
+    try {
+        DatabaseManager::initialize(Config::get_db_path());
+        std::cout << "[DatabaseManager] Database initialized successfully\n";
+    } catch (const std::exception& e) {
+        std::cerr << "[DatabaseManager] Error: " << e.what() << std::endl;
         return 1;
     }
     
+    int port = Config::get_port();
+    std::cout << "\nStarting server on port " << port << "...\n";
+    std::cout << "Health check: http://localhost:" << port << "/api/health\n";
+    std::cout << "API Base: http://localhost:" << port << "/api\n\n";
+    
+    // Initialize JWT secret
+    JwtUtils::set_secret(Config::get_jwt_secret());
+    
     // Initialize route engine
     RouteEngine::initialize();
-    
-    // Create Crow application
-    crow::SimpleApp app;
     
     // Apply CORS middleware globally
     app.loglevel(crow::LogLevel::Info);
@@ -422,14 +429,12 @@ int main() {
     // ============================================================
     // START SERVER
     // ============================================================
-    std::cout << "\nStarting server on port " << Config::SERVER_PORT << "..." << std::endl;
-    std::cout << "Health check: http://localhost:" << Config::SERVER_PORT << "/api/health" << std::endl;
-    std::cout << "API Base: http://localhost:" << Config::SERVER_PORT << "/api" << std::endl;
+    std::cout << "\nStarting server on port " << port << "..." << std::endl;
+    std::cout << "Health check: http://localhost:" << port << "/api/health" << std::endl;
+    std::cout << "API Base: http://localhost:" << port << "/api" << std::endl;
     std::cout << "\nPress Ctrl+C to stop the server\n" << std::endl;
     
-    app.port(Config::SERVER_PORT)
-       .multithreaded()
-       .run();
+    app.bindaddr("0.0.0.0").port(Config::get_port()).multithreaded().run();
     
     return 0;
 }

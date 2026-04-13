@@ -6,14 +6,25 @@
 class Config {
 public:
     // Server settings
-    static constexpr int SERVER_PORT = 8080;
+    static int get_port() {
+        const char* port = std::getenv("PORT");
+        return port ? std::stoi(port) : 8080;
+    }
     static constexpr int SERVER_THREADS = 4;
     
-    // Database
-    static constexpr const char* DB_PATH = "./swifttrack.db";
+    // Database (For production, use PostgreSQL via RENDER_DB_URL)
+    static std::string get_db_path() {
+        const char* db_url = std::getenv("RENDER_DB_URL");
+        if (db_url) return std::string(db_url);
+        const char* db_path = std::getenv("DB_PATH");
+        return db_path ? std::string(db_path) : "./swifttrack.db";
+    }
     
     // JWT settings
-    static constexpr const char* JWT_SECRET = "swifttrack_jwt_secret_key_2024_very_long_and_secure";
+    static std::string get_jwt_secret() {
+        const char* secret = std::getenv("JWT_SECRET");
+        return secret ? std::string(secret) : "swifttrack_jwt_secret_key_2024_very_long_and_secure";
+    }
     static constexpr int JWT_EXPIRY_HOURS = 24;
     
     // Pricing constants
@@ -34,7 +45,10 @@ public:
     static constexpr const char* APP_VERSION = "1.0.0";
     
     // CORS
-    static constexpr const char* ALLOWED_ORIGIN = "http://localhost:5173";
+    static std::string get_allowed_origin() {
+        const char* origin = std::getenv("ALLOWED_ORIGIN");
+        return origin ? std::string(origin) : "https://swift-tracker.netlify.app";
+    }
     
     // Get environment variable with fallback
     static std::string get_env(const std::string& key, const std::string& default_val) {
