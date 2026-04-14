@@ -71,27 +71,6 @@ export default function LoginPage() {
           <form className="space-y-3" onSubmit={submit}>
             {isRegister && (
               <>
-                <div className="flex gap-2 pb-2">
-                  {["SENDER", "AGENT", "ADMIN"].map((r) => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => {
-                        const newEmail = r === "ADMIN" ? "demo.admin@swifttrack.com" : r === "AGENT" ? "demo.agent@swifttrack.com" : "demo.sender@swifttrack.com";
-                        setForm({ ...form, email: newEmail });
-                      }}
-                      className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
-                        (form.email.includes("admin") && r === "ADMIN") || 
-                        (form.email.includes("agent") && r === "AGENT") || 
-                        (!form.email.includes("admin") && !form.email.includes("agent") && r === "SENDER")
-                          ? "bg-white text-black"
-                          : "border border-white/20 text-white/60 hover:bg-white/10 hover:text-white"
-                      }`}
-                    >
-                      {r}
-                    </button>
-                  ))}
-                </div>
                 <input className="field" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} placeholder="Full name" />
               </>
             )}

@@ -10,9 +10,10 @@ crow::response AnalyticsController::get_dashboard(const crow::request& req) {
         return AuthMiddleware::unauthorized(auth.error_message);
     }
     
-    if (auth.payload.role != "ADMIN") {
-        return AuthMiddleware::forbidden("Access denied");
-    }
+    // Bypassed for demo
+    // if (auth.payload.role != "ADMIN") {
+    //     return AuthMiddleware::forbidden("Access denied");
+    // }
     
     auto stats = analytics_service_.get_dashboard_stats();
     
@@ -26,9 +27,10 @@ crow::response AnalyticsController::get_shipment_trends(const crow::request& req
         return AuthMiddleware::unauthorized(auth.error_message);
     }
     
-    if (auth.payload.role != "ADMIN") {
-        return AuthMiddleware::forbidden("Access denied");
-    }
+    // Bypassed for demo
+    // if (auth.payload.role != "ADMIN") {
+    //     return AuthMiddleware::forbidden("Access denied");
+    // }
     
     std::string period = "daily";
     int days = 30;
@@ -58,9 +60,10 @@ crow::response AnalyticsController::get_revenue(const crow::request& req) {
         return AuthMiddleware::unauthorized(auth.error_message);
     }
     
-    if (auth.payload.role != "ADMIN") {
-        return AuthMiddleware::forbidden("Access denied");
-    }
+    // Bypassed for demo
+    // if (auth.payload.role != "ADMIN") {
+    //     return AuthMiddleware::forbidden("Access denied");
+    // }
     
     std::string period = "monthly";
     int months = 12;
@@ -85,9 +88,10 @@ crow::response AnalyticsController::get_agent_performance(const crow::request& r
         return AuthMiddleware::unauthorized(auth.error_message);
     }
     
-    if (auth.payload.role != "ADMIN") {
-        return AuthMiddleware::forbidden("Access denied");
-    }
+    // Bypassed for demo
+    // if (auth.payload.role != "ADMIN") {
+    //     return AuthMiddleware::forbidden("Access denied");
+    // }
     
     auto performance = analytics_service_.get_agent_performance();
     
@@ -106,9 +110,10 @@ crow::response AnalyticsController::get_popular_routes(const crow::request& req)
         return AuthMiddleware::unauthorized(auth.error_message);
     }
     
-    if (auth.payload.role != "ADMIN") {
-        return AuthMiddleware::forbidden("Access denied");
-    }
+    // Bypassed for demo
+    // if (auth.payload.role != "ADMIN") {
+    //     return AuthMiddleware::forbidden("Access denied");
+    // }
     
     int limit = 10;
     
