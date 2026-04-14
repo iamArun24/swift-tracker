@@ -5,7 +5,6 @@ import StatCard from "../components/StatCard";
 import RotatingText from "../components/RotatingText";
 import ElectricBorder from "../components/ElectricBorder";
 import SectionBorder from "../components/SectionBorder";
-import Button from "../components/Button";
 import api from "../services/api";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { usePageReveal } from "../hooks/usePageReveal";
@@ -16,13 +15,10 @@ export default function AdminPanel() {
   const [dashboard, setDashboard] = useState(null);
   const [revenue, setRevenue] = useState([]);
   const [shipments, setShipments] = useState([]);
-  const [agents, setAgents] = useState([]);
-  const [loadingAssign, setLoadingAssign] = useState(null);
 
   useEffect(() => {
     loadDashboard();
     loadShipments();
-    loadAgents();
   }, []);
 
   const loadDashboard = () => {
@@ -42,28 +38,6 @@ export default function AdminPanel() {
       .get("/admin/shipments")
       .then((res) => setShipments(res.data?.data || res.data?.items || []))
       .catch(() => setShipments([]));
-  };
-
-  const loadAgents = () => {
-    api
-      .get("/admin/users?role=AGENT")
-      .then((res) => {
-        const users = res.data?.data || [];
-        setAgents(users.filter(u => u.role === "AGENT"));
-      })
-      .catch(() => setAgents([]));
-  };
-
-  const assignAgent = async (shipmentId, agentId) => {
-    if (!agentId) return;
-    setLoadingAssign(shipmentId);
-    try {
-      await api.patch(`/admin/shipments/${shipmentId}/assign`, { agent_id: parseInt(agentId) });
-      await loadShipments(); // Refresh list to show assignment
-    } catch (err) {
-      console.error(err);
-    }
-    setLoadingAssign(null);
   };
 
   return (
@@ -119,37 +93,22 @@ export default function AdminPanel() {
         </SectionBorder>
 
         <SectionBorder radius={16}>
-          <Card className="reveal h-[360px] flex flex-col" title="Shipment Management">
+          <Card className="reveal h-[360px] flex flex-col" title="Shipment Surveillance">
             <div className="flex-1 overflow-auto pr-2 space-y-2">
               {shipments.map((s) => (
                 <div data-magic-card key={s.id} className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm">
                   <div className="flex justify-between mb-2">
                     <span className="font-semibold">{s.tracking_number}</span>
-                    <span className="text-emerald-400">{titleCase(s.current_status || "BOOKED")}</span>
+                    <span className={`font-bold ${s.current_status === "REJECTED" ? "text-red-400" : s.current_status === "DELIVERED" ? "text-emerald-400" : "text-yellow-400"}`}>
+                      {titleCase(s.current_status || "BOOKED")}
+                    </span>
                   </div>
-                  <div className="mb-3 text-white/70">
+                  <div className="mb-1 text-white/70">
                     {s.sender_city} → {s.recipient_city}
                   </div>
-                  
-                  {s.current_status === "BOOKED" || s.current_status === "PENDING" ? (
-                    <div className="flex gap-2 items-center">
-                      <select 
-                        className="field py-1 px-2 text-xs h-auto min-h-0 w-full"
-                        onChange={(e) => assignAgent(s.id, e.target.value)}
-                        disabled={loadingAssign === s.id}
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Assign to Agent...</option>
-                        {agents.map(a => (
-                          <option key={a.id} value={a.id}>{a.username} ({a.email})</option>
-                        ))}
-                      </select>
-                    </div>
-                  ) : (
-                    <div className="text-xs text-white/50">
-                      Assigned to Agent ID: {s.agent_id || "Unknown"}
-                    </div>
-                  )}
+                  <div className="text-xs text-white/50">
+                    Agent ID: {s.agent_id ? s.agent_id : "Awaiting Acceptance"}
+                  </div>
                 </div>
               ))}
               {shipments.length === 0 && <p className="text-white/50">No shipments found.</p>}
