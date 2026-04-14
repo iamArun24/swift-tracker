@@ -1,0 +1,27 @@
+# Netlify configuration for SwiftTrack
+# Proxies API and WebSocket requests to the Render backend,
+# which avoids CORS entirely since everything appears same-origin.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Proxy all /api/* requests to the Render backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://swift-tracker.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# Proxy WebSocket connections
+[[redirects]]
+  from = "/ws/*"
+  to = "https://swift-tracker.onrender.com/ws/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — serve index.html for all other routes (React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
