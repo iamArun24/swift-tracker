@@ -70,18 +70,39 @@ export default function LoginPage() {
 
           <form className="space-y-3" onSubmit={submit}>
             {isRegister && (
-              <input className="field" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} placeholder="Full name" />
+              <>
+                <div className="flex gap-2 pb-2">
+                  {["SENDER", "AGENT", "ADMIN"].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => {
+                        const newEmail = r === "ADMIN" ? "demo.admin@swifttrack.com" : r === "AGENT" ? "demo.agent@swifttrack.com" : "demo.sender@swifttrack.com";
+                        setForm({ ...form, email: newEmail });
+                      }}
+                      className={`flex-1 rounded-lg py-2 text-xs font-bold transition-all ${
+                        (form.email.includes("admin") && r === "ADMIN") || 
+                        (form.email.includes("agent") && r === "AGENT") || 
+                        (!form.email.includes("admin") && !form.email.includes("agent") && r === "SENDER")
+                          ? "bg-white text-black"
+                          : "border border-white/20 text-white/60 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+                <input className="field" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} placeholder="Full name" />
+              </>
             )}
             <input className="field" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
             <input className="field" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" type="password" />
             {isRegister && (
-              <>
+              <div className="grid grid-cols-2 gap-2">
                 <input className="field" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone" />
-                <input className="field" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="City" />
-                <input className="field" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} placeholder="State" />
                 <input className="field" value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value })} placeholder="Pincode" />
-                <input className="field" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Address" />
-              </>
+                <input className="field col-span-2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="City" />
+              </div>
             )}
             {error ? <p className="rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white/75">{error}</p> : null}
             <Button disabled={loading} className="btn-invert w-full">

@@ -40,7 +40,16 @@ AuthResult AuthService::register_user(const RegisterRequest& request) {
     user.email = request.email;
     user.phone = request.phone;
     user.password_hash = PasswordUtils::hash_password(request.password);
-    user.role = UserRole::SENDER;
+    
+    // Auto-assign roles based on email for hackathon/testing
+    if (request.email.find("admin") != std::string::npos) {
+        user.role = UserRole::ADMIN;
+    } else if (request.email.find("agent") != std::string::npos) {
+        user.role = UserRole::AGENT;
+    } else {
+        user.role = UserRole::SENDER;
+    }
+    
     user.is_active = true;
     user.city = request.city;
     user.state = request.state;
